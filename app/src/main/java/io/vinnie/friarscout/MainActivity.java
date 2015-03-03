@@ -7,11 +7,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import butterknife.ButterKnife;
+import io.vinnie.friarscout.api.Team;
 import io.vinnie.friarscout.api.TheBlueAllianceMgr;
+import io.vinnie.friarscout.model.User;
 
 
-public class MainActivity extends Activity implements LoginFragment.OnLoginListener, TeamListFragment.OnFragmentInteractionListener {
+public class MainActivity extends Activity implements LoginFragment.OnLoginListener, TeamListFragment.OnTeamListListener, MainFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +28,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
         ButterKnife.inject(this);
 
         TheBlueAllianceMgr.init(getApplicationContext());
+        Firebase.setAndroidContext(getApplicationContext());
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -62,10 +70,37 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
     }
 
     @Override
-    public void onLoggedIn(String accountName) {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, TeamListFragment.newInstance(), "teamList")
-                .commit();
+    public void onLoggedIn(final String accountName, final String displayName) {
+        final Firebase userFirebase = new Firebase("https://friarscout.firebaseio.com/users/");
+        userFirebase.child(Util.emailToKey(accountName)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User u = dataSnapshot.getValue(User.class);
+                    if (u.isAdmin()) {
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.container, AdminFragment.newInstance(), "teamList")
+                                .commit();
+                    } else {
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.container, MainFragment.newInstance(), "main")
+                                .commit();
+                    }
+                } else {
+                    userFirebase.child(Util.emailToKey(accountName)).setValue(new User(accountName, displayName));
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onTeamSelected(Team team) {
+
     }
 
     @Override

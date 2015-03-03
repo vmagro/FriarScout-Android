@@ -21,7 +21,7 @@ import retrofit.client.Response;
  */
 public class TeamListFragment extends ListFragment {
 
-    private OnFragmentInteractionListener mListener;
+    private OnTeamListListener mListener;
 
     /**
      * Use this factory method to create a new instance of
@@ -46,7 +46,7 @@ public class TeamListFragment extends ListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnTeamListListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -94,9 +94,9 @@ public class TeamListFragment extends ListFragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnTeamListListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onTeamSelected(Team team);
     }
 
 }
