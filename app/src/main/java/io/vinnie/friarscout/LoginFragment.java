@@ -128,6 +128,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onConnected(Bundle bundle) {
         Toast.makeText(getActivity(), Plus.AccountApi.getAccountName(mGoogleApiClient), Toast.LENGTH_LONG).show();
+        mListener.onLoggedIn(Plus.AccountApi.getAccountName(mGoogleApiClient));
     }
 
     @Override
@@ -175,7 +176,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.Connectio
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnLoginListener {
-        public void onLoggedIn();
+        public void onLoggedIn(String accountName);
     }
 
 }

@@ -2,14 +2,16 @@ package io.vinnie.friarscout;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.ButterKnife;
+import io.vinnie.friarscout.api.TheBlueAllianceMgr;
 
 
-public class MainActivity extends Activity implements LoginFragment.OnLoginListener {
+public class MainActivity extends Activity implements LoginFragment.OnLoginListener, TeamListFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +19,8 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
+
+        TheBlueAllianceMgr.init(getApplicationContext());
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -58,7 +62,14 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
     }
 
     @Override
-    public void onLoggedIn() {
+    public void onLoggedIn(String accountName) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, TeamListFragment.newInstance(), "teamList")
+                .commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }
