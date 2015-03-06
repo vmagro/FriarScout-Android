@@ -1,6 +1,5 @@
 package io.vinnie.friarscout;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import io.vinnie.friarscout.model.Team;
 
 /**
  * Created by vmagro on 3/3/15.
@@ -22,7 +20,6 @@ public class TeamListFragment extends Fragment {
     @InjectView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private OnTeamListListener mListener;
     private TeamListAdapter mAdapter;
 
     /**
@@ -58,43 +55,6 @@ public class TeamListFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnTeamListListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnTeamListListener {
-        // TODO: Update argument type and name
-        public void onTeamSelected(Team team);
     }
 
 }

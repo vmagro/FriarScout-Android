@@ -1,10 +1,12 @@
 package io.vinnie.friarscout;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import io.vinnie.friarscout.event.SelectTeam;
 import io.vinnie.friarscout.model.Team;
 
 /**
@@ -24,7 +26,9 @@ public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.ViewHo
     }
 
     public TeamListAdapter() {
-        teams.add(new Team(3309, "Friarbots", "http://peetahzee.com/me.jpg"));
+        for (int i = 0; i < 10; i++) {
+            teams.add(new Team(3309, "Friarbots", "http://peetahzee.com/me.jpg"));
+        }
     }
 
     // Create new views (invoked by the layout manager)
@@ -41,7 +45,14 @@ public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.ViewHo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(TeamListAdapter.ViewHolder holder, int position) {
-        holder.card.setTeam(teams.get(position));
+        final Team team = teams.get(position);
+        holder.card.setTeam(team);
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FSBus.bus.post(new SelectTeam(team));
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)

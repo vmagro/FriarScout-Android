@@ -1,9 +1,11 @@
 package io.vinnie.friarscout.model;
 
+import java.io.Serializable;
+
 /**
  * Created by vmagro on 3/3/15.
  */
-public class Team {
+public class Team implements Serializable {
 
     private int number;
     private String name;

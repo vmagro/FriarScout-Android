@@ -6,32 +6,40 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
-import io.vinnie.friarscout.model.Team;
+import io.vinnie.friarscout.event.SelectTeam;
 import io.vinnie.friarscout.model.User;
 
 
-public class MainActivity extends Activity implements LoginFragment.OnLoginListener, TeamListFragment.OnTeamListListener, MainFragment.OnFragmentInteractionListener {
+public class MainActivity extends Activity implements LoginFragment.OnLoginListener, MainFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Firebase.setAndroidContext(getApplicationContext());
+        FSBus.bus = new Bus();
+
+        FSBus.bus.register(this);
+
         setContentView(R.layout.activity_main);
 
         ButterKnife.inject(this);
-
-        Firebase.setAndroidContext(getApplicationContext());
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     //.add(R.id.container, MainFragment.newInstance(), "main")
                     .add(R.id.container, TeamListFragment.newInstance(), "teamList")
+                    .addToBackStack("teamList")
                     .commit();
         }
     }
@@ -77,6 +85,7 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
                 if (dataSnapshot.exists()) {
                     User u = dataSnapshot.getValue(User.class);
                     getFragmentManager().beginTransaction()
+                            .addToBackStack("main")
                             .replace(R.id.container, MainFragment.newInstance(), "main")
                             .commit();
                 } else {
@@ -91,9 +100,12 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
         });
     }
 
-    @Override
-    public void onTeamSelected(Team team) {
-
+    @Subscribe
+    public void onTeamSelected(SelectTeam event) {
+        getFragmentManager().beginTransaction()
+                .addToBackStack("team")
+                .replace(R.id.container, TeamFragment.newInstance(event.getTeam()), "team")
+                .commit();
     }
 
     @Override
