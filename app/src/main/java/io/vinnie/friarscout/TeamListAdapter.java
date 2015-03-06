@@ -1,72 +1,52 @@
 package io.vinnie.friarscout;
 
-import android.app.Activity;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import io.vinnie.friarscout.api.Team;
+import io.vinnie.friarscout.model.Team;
 
 /**
- * Created by vmagro on 3/3/15.
+ * Created by vmagro on 3/6/15.
  */
-public class TeamListAdapter extends BaseAdapter {
+public class TeamListAdapter extends RecyclerView.Adapter<TeamListAdapter.ViewHolder> {
 
-    private final LayoutInflater inflater;
-    private final List<Team> teams;
+    private ArrayList<Team> teams = new ArrayList<Team>();
 
-    public TeamListAdapter(Activity context, List<Team> teams) {
-        this.teams = teams;
-        inflater = context.getLayoutInflater();
-    }
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TeamCard card;
 
-    @Override
-    public int getCount() {
-        return teams.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return teams.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return teams.get(position).hashCode();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
-        ViewHolder holder;
-        if (convertView != null) {
-            view = convertView;
-            holder = (ViewHolder) view.getTag();
-        } else {
-            view = inflater.inflate(R.layout.team_list_item, parent, false);
-            holder = new ViewHolder();
-            ButterKnife.inject(holder, view);
-            view.setTag(holder);
+        public ViewHolder(TeamCard v) {
+            super(v);
+            card = v;
         }
-
-        Team team = teams.get(position);
-        holder.teamNumber.setText("" + team.getTeamNumber());
-        holder.teamName.setText(team.getNickname());
-
-        return view;
     }
 
-    class ViewHolder {
-        @InjectView(R.id.team_number)
-        public TextView teamNumber;
+    public TeamListAdapter() {
+        teams.add(new Team(3309, "Friarbots", "http://peetahzee.com/me.jpg"));
+    }
 
-        @InjectView(R.id.team_name)
-        public TextView teamName;
+    // Create new views (invoked by the layout manager)
+    @Override
+    public TeamListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                         int viewType) {
+        // create a new view
+        TeamCard v = new TeamCard(parent.getContext());
+
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(TeamListAdapter.ViewHolder holder, int position) {
+        holder.card.setTeam(teams.get(position));
+    }
+
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        return teams.size();
     }
 }

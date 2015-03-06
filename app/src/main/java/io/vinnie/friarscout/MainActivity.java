@@ -13,8 +13,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import butterknife.ButterKnife;
-import io.vinnie.friarscout.api.Team;
-import io.vinnie.friarscout.api.TheBlueAllianceMgr;
+import io.vinnie.friarscout.model.Team;
 import io.vinnie.friarscout.model.User;
 
 
@@ -27,12 +26,12 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
 
         ButterKnife.inject(this);
 
-        TheBlueAllianceMgr.init(getApplicationContext());
         Firebase.setAndroidContext(getApplicationContext());
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, LoginFragment.newInstance(), "login")
+                    //.add(R.id.container, MainFragment.newInstance(), "main")
+                    .add(R.id.container, TeamListFragment.newInstance(), "teamList")
                     .commit();
         }
     }
@@ -77,15 +76,9 @@ public class MainActivity extends Activity implements LoginFragment.OnLoginListe
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User u = dataSnapshot.getValue(User.class);
-                    if (u.isAdmin()) {
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.container, AdminFragment.newInstance(), "teamList")
-                                .commit();
-                    } else {
-                        getFragmentManager().beginTransaction()
-                                .replace(R.id.container, MainFragment.newInstance(), "main")
-                                .commit();
-                    }
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.container, MainFragment.newInstance(), "main")
+                            .commit();
                 } else {
                     userFirebase.child(Util.emailToKey(accountName)).setValue(new User(accountName, displayName));
                 }
